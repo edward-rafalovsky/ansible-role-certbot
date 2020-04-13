@@ -1,6 +1,24 @@
 ---
+
+- name: Setup PPA reps for 'Ubuntu'
+  apt_repository:
+    repo: "{{ item }}"
+  with_items:
+    - deb http://archive.ubuntu.com/ubuntu/ xenial universe
+    - deb http://archive.ubuntu.com/ubuntu/ xenial-updates universe
+    - deb http://archive.ubuntu.com/ubuntu/ xenial-security universe
+    - ppa:certbot/certbot
+  when: 
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version == "16.04" 
+
 - name: Install Certbot.
-  package: "name={{ certbot_package }} state=present"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: 
+    - "{{ certbot_package }}"
+    - python-certbot-nginx
 
 - name: Set Certbot script variable.
   set_fact:
